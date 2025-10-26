@@ -1,4 +1,4 @@
-# Contributing to AI RAG Assistant Chatbot
+# Contributing to StudySync
 
 Thanks for your interest in contributing! Please take a moment to read this guide.
 
