@@ -1,16 +1,99 @@
 <template>
   <div class="home">
-    <h2>Welcome, {{ username }}!</h2>
-
-    <!-- Date and Time Card -->
-    <div class="date-time-card">
-      <p>{{ currentDateTime }}</p>
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <h1 class="hero-title">Welcome back, {{ username }}! 👋</h1>
+      <p class="hero-subtitle">{{ currentDateTime }}</p>
     </div>
 
-    <div class="tool-cards">
+    <!-- Quick Access Cards -->
+    <div class="quick-access-section">
+      <h2 class="section-header">Quick Access</h2>
+      <div class="quick-access-grid">
+        <div class="access-card" @click="navigateTo('/materials')">
+          <div
+            class="access-icon"
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            "
+          >
+            <v-icon size="32" color="white">mdi-book-open-variant</v-icon>
+          </div>
+          <h3>Study Materials</h3>
+          <p>Manage your files & notes</p>
+        </div>
+        <div class="access-card" @click="navigateTo('/quizzes')">
+          <div
+            class="access-icon"
+            style="
+              background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            "
+          >
+            <v-icon size="32" color="white">mdi-file-question</v-icon>
+          </div>
+          <h3>Quizzes</h3>
+          <p>Test your knowledge</p>
+        </div>
+        <div class="access-card" @click="navigateTo('/progress')">
+          <div
+            class="access-icon"
+            style="
+              background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            "
+          >
+            <v-icon size="32" color="white">mdi-chart-line</v-icon>
+          </div>
+          <h3>Progress</h3>
+          <p>Track your sessions</p>
+        </div>
+        <div class="access-card" @click="navigateTo('/goals')">
+          <div
+            class="access-icon"
+            style="
+              background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            "
+          >
+            <v-icon size="32" color="white">mdi-target</v-icon>
+          </div>
+          <h3>Goals</h3>
+          <p>Set & achieve goals</p>
+        </div>
+        <div class="access-card" @click="navigateTo('/planner')">
+          <div
+            class="access-icon"
+            style="
+              background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            "
+          >
+            <v-icon size="32" color="white">mdi-calendar</v-icon>
+          </div>
+          <h3>Planner</h3>
+          <p>Schedule your studies</p>
+        </div>
+        <div class="access-card" @click="navigateTo('/resources')">
+          <div
+            class="access-icon"
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            "
+          >
+            <v-icon size="32" color="white">mdi-link-variant</v-icon>
+          </div>
+          <h3>Resources</h3>
+          <p>Learning materials</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-header">Study Tools</h2>
+
+    <div class="tools-grid">
       <!-- Music Recommendation Tool -->
-      <div class="tool-card music-card">
-        <h3>Music Recommendations</h3>
+      <div class="tool-card">
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-music</v-icon>
+          <h3>Music Recommendations</h3>
+        </div>
         <input
           v-model="mood"
           type="text"
@@ -54,7 +137,10 @@
 
       <!-- Pomodoro Timer -->
       <div class="tool-card pomodoro-card">
-        <h3>Pomodoro Timer</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-timer</v-icon>
+          <h3>Pomodoro Timer</h3>
+        </div>
         <div class="pomodoro">
           <div class="timer-circle">
             <!-- SVG Progress Circle -->
@@ -84,7 +170,10 @@
 
       <!-- To-Do List -->
       <div class="tool-card todo-card">
-        <h3>To-Do List</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-format-list-checks</v-icon>
+          <h3>To-Do List</h3>
+        </div>
         <input
           @keyup.enter="addTask"
           v-model="newTask"
@@ -102,7 +191,10 @@
 
       <!-- Flashcards -->
       <div class="tool-card flashcard-card">
-        <h3>Flashcards</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-cards</v-icon>
+          <h3>Flashcards</h3>
+        </div>
         <div
           v-for="(flashcard, index) in flashcards"
           :key="index"
@@ -139,7 +231,10 @@
 
       <!-- Full Calculator UI -->
       <div class="tool-card calculator-card">
-        <h3>Calculator</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-calculator</v-icon>
+          <h3>Calculator</h3>
+        </div>
         <div class="calculator">
           <div class="display">
             <p>{{ calcDisplay }}</p>
@@ -171,7 +266,10 @@
 
       <!-- Random Study Tip Generator -->
       <div class="tool-card tip-card">
-        <h3>Random Study Tip</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-lightbulb</v-icon>
+          <h3>Study Tips</h3>
+        </div>
         <button @click="generateStudyTip" class="action-button">
           Get Study Tip
         </button>
@@ -182,7 +280,10 @@
 
       <!-- Chat with AI Tool -->
       <div class="tool-card chat-ai-card">
-        <h3>Chat with AI</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-robot</v-icon>
+          <h3>AI Assistant</h3>
+        </div>
         <div class="card-content">
           <div class="chat-box">
             <div
@@ -212,7 +313,10 @@
       </div>
 
       <div class="tool-card weather-card">
-        <h3>Weather Check</h3>
+        <div class="tool-header">
+          <v-icon color="white">mdi-weather-partly-cloudy</v-icon>
+          <h3 style="color: white">Weather</h3>
+        </div>
         <div class="input-suggestions-container">
           <!-- Input Field for City -->
           <input
@@ -221,6 +325,7 @@
             placeholder="Enter city"
             @input="fetchCitySuggestions"
             @keyup.enter="getWeather"
+            style="color: white !important"
             required
           />
 
@@ -263,7 +368,10 @@
       </div>
 
       <div class="tool-card notes-card">
-        <h3>Quick Notes</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-note-text</v-icon>
+          <h3>Quick Notes</h3>
+        </div>
         <textarea
           v-model="noteContent"
           placeholder="Type your note here..."
@@ -286,20 +394,104 @@
       </div>
 
       <div class="tool-card motivation-card">
-        <h3>Daily Motivation</h3>
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-heart</v-icon>
+          <h3>Daily Motivation</h3>
+        </div>
         <p style="margin-top: 10px" v-if="motivationalQuote">
           {{ motivationalQuote }}
         </p>
         <button @click="getMotivation" class="action-button">New Quote</button>
       </div>
-    </div>
 
-    <!-- Thank you message -->
-    <div class="thank-you">
-      <p style="text-align: center; margin-top: 2em; font-weight: bold">
-        Thank you for using our productivity tools! More features coming soon.
-        🚀
-      </p>
+      <!-- Time Tracker -->
+      <div class="tool-card time-tracker-card">
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-clock-time-four</v-icon>
+          <h3 style="color: white">Study Time Tracker</h3>
+        </div>
+        <div class="card-content">
+          <p style="margin-bottom: 15px; color: white">
+            Track your study time today
+          </p>
+          <div v-if="!isTrackingTime">
+            <button @click="startTimeTracking" class="action-button">
+              Start Tracking
+            </button>
+          </div>
+          <div v-else>
+            <div
+              style="
+                font-size: 32px;
+                font-weight: bold;
+                margin: 20px 0;
+                color: white;
+              "
+            >
+              {{ trackedTime }}
+            </div>
+            <button
+              @click="stopTimeTracking"
+              class="action-button"
+              style="background-color: #ef4444"
+            >
+              Stop Tracking
+            </button>
+          </div>
+          <div
+            v-if="totalStudyTimeToday"
+            style="
+              margin-top: 15px;
+              padding-top: 15px;
+              border-top: 1px solid rgba(255, 255, 255, 0.2);
+            "
+          >
+            <p style="color: white">
+              <strong>Total today:</strong> {{ totalStudyTimeToday }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Link Bookmarks -->
+      <div class="tool-card bookmarks-card">
+        <div class="tool-header">
+          <v-icon color="#6366f1">mdi-bookmark-multiple</v-icon>
+          <h3>Quick Bookmarks</h3>
+        </div>
+        <div class="card-content">
+          <div class="bookmark-input">
+            <input
+              v-model="newBookmarkName"
+              placeholder="Bookmark name"
+              @keyup.enter="addBookmark"
+            />
+            <input
+              v-model="newBookmarkUrl"
+              placeholder="URL"
+              @keyup.enter="addBookmark"
+            />
+            <button @click="addBookmark" class="action-button">
+              Add Bookmark
+            </button>
+          </div>
+          <ul class="bookmarks-list">
+            <li
+              v-for="(bookmark, index) in bookmarks"
+              :key="index"
+              class="bookmark-item"
+            >
+              <a :href="bookmark.url" target="_blank" rel="noopener noreferrer">
+                <v-icon size="small" color="#6366f1">mdi-link</v-icon>
+                {{ bookmark.name }}
+              </a>
+              <button @click="deleteBookmark(index)" class="delete-btn">
+                <v-icon size="small">mdi-close</v-icon>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -351,6 +543,14 @@ export default {
       savedNotes: [],
       isLoadingAI: false,
       isLoadingMusic: false,
+      isTrackingTime: false,
+      trackedTime: "00:00:00",
+      trackingInterval: null,
+      trackingSeconds: 0,
+      totalStudyTimeToday: "",
+      newBookmarkName: "",
+      newBookmarkUrl: "",
+      bookmarks: [],
       isLoadingWeather: false,
     };
   },
@@ -366,6 +566,9 @@ export default {
     this.fetchUsername();
     this.updateDateTime();
     this.timerInterval = setInterval(this.updateDateTime, 1000);
+    this.getMotivation(); // Load initial quote
+    this.loadBookmarks();
+    this.loadTotalStudyTime();
     if (!this.token) {
       alert("You need to log in first!");
       this.$router.push("/login");
@@ -431,7 +634,7 @@ export default {
       }
       try {
         const response = await axios.get(
-          `https://studysync-study-buddy-app.onrender.com/api/cities?query=${this.city}`,
+          `https://studysync-backend-api.vercel.app/api/cities?query=${this.city}`,
         );
         this.citySuggestions = response.data.cities.map((city) => ({
           displayName: `${city.name}, ${city.state ? city.state + ", " : ""}${city.country}`,
@@ -457,7 +660,7 @@ export default {
 
         // Make an API request to get the user's profile
         const response = await axios.get(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -594,7 +797,7 @@ export default {
           return;
         }
         const response = await axios.get(
-          `https://studysync-study-buddy-app.onrender.com/api/music?searchTerm=${this.mood}`,
+          `https://studysync-backend-api.vercel.app/api/music?searchTerm=${this.mood}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -635,7 +838,7 @@ export default {
 
         // Call the backend API for weather data
         const response = await axios.get(
-          `https://studysync-study-buddy-app.onrender.com/api/weather?city=${this.city}`,
+          `https://studysync-backend-api.vercel.app/api/weather?city=${this.city}`,
         );
 
         // Check if the response was successful and contains data
@@ -879,48 +1082,203 @@ export default {
         this.calcDisplay = "Error"; // Handle unexpected errors
       }
     },
+    navigateTo(path) {
+      this.$router.push(path);
+    },
+    startTimeTracking() {
+      this.isTrackingTime = true;
+      this.trackingSeconds = 0;
+      this.trackingInterval = setInterval(() => {
+        this.trackingSeconds++;
+        const hours = Math.floor(this.trackingSeconds / 3600);
+        const minutes = Math.floor((this.trackingSeconds % 3600) / 60);
+        const seconds = this.trackingSeconds % 60;
+        this.trackedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }, 1000);
+    },
+    stopTimeTracking() {
+      this.isTrackingTime = false;
+      if (this.trackingInterval) {
+        clearInterval(this.trackingInterval);
+      }
+      // Save to local storage
+      const today = new Date().toDateString();
+      const stored = localStorage.getItem("studyTimeData");
+      let timeData = stored ? JSON.parse(stored) : {};
+      timeData[today] = (timeData[today] || 0) + this.trackingSeconds;
+      localStorage.setItem("studyTimeData", JSON.stringify(timeData));
+      this.loadTotalStudyTime();
+      this.trackingSeconds = 0;
+      this.trackedTime = "00:00:00";
+    },
+    loadTotalStudyTime() {
+      const today = new Date().toDateString();
+      const stored = localStorage.getItem("studyTimeData");
+      if (stored) {
+        const timeData = JSON.parse(stored);
+        const totalSeconds = timeData[today] || 0;
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        this.totalStudyTimeToday = `${hours}h ${minutes}m`;
+      }
+    },
+    addBookmark() {
+      if (this.newBookmarkName.trim() && this.newBookmarkUrl.trim()) {
+        let url = this.newBookmarkUrl.trim();
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+          url = "https://" + url;
+        }
+        this.bookmarks.push({
+          name: this.newBookmarkName.trim(),
+          url: url,
+        });
+        localStorage.setItem("studyBookmarks", JSON.stringify(this.bookmarks));
+        this.newBookmarkName = "";
+        this.newBookmarkUrl = "";
+      }
+    },
+    deleteBookmark(index) {
+      this.bookmarks.splice(index, 1);
+      localStorage.setItem("studyBookmarks", JSON.stringify(this.bookmarks));
+    },
+    loadBookmarks() {
+      const stored = localStorage.getItem("studyBookmarks");
+      if (stored) {
+        this.bookmarks = JSON.parse(stored);
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 .home {
-  padding: 2em;
-  font-family: "Poppins", sans-serif;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  background: #f8fafc;
+  width: 100%;
+  min-height: 100vh;
 }
 
-h2 {
+.hero-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e3e9f0 100%);
+  padding: 60px 32px;
   text-align: center;
-  color: #333;
-  margin-bottom: 1.5em;
+  color: #2c3e50;
 }
 
-.tool-cards {
+.hero-title {
+  font-size: 2.5em;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+}
+
+.hero-subtitle {
+  font-size: 1.1em;
+  opacity: 0.95;
+  margin: 0;
+  font-weight: 500;
+}
+
+.section-header {
+  font-size: 1.75em;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 48px 32px 24px;
+}
+
+.tools-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2em;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+  padding: 0 32px 48px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 40px 20px;
+  }
+
+  .hero-title {
+    font-size: 1.75em;
+  }
+
+  .section-header {
+    font-size: 1.5em;
+    margin: 32px 20px 20px;
+  }
+
+  .quick-access-section {
+    padding: 32px 20px;
+  }
+
+  .quick-access-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+    padding: 0 20px 32px;
+    gap: 20px;
+  }
+
+  .tool-card {
+    padding: 24px;
+  }
 }
 
 .tool-card {
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  padding: 1.5em;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 28px;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  max-height: 1000px;
-  overflow: hidden;
-  min-height: 450px;
+  border: 1px solid #e5e7eb;
 }
 
 .tool-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tool-header h3 {
+  font-size: 1.35em;
+  font-weight: 700;
+  margin: 0;
+  color: #1e293b;
+}
+
+.tool-card input,
+.tool-card textarea {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.95em;
+  transition: all 0.2s ease;
+  font-family: "Inter", sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tool-card input:focus,
+.tool-card textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .card-content {
@@ -930,19 +1288,24 @@ h2 {
 }
 
 .action-button {
-  background-color: #3949ab;
+  background: #6366f1;
   color: white;
-  padding: 10px 20px;
+  padding: 13px 24px;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 0.95em;
+  font-family: "Inter", sans-serif;
 }
 
 .action-button:hover {
-  background-color: #5f5fc1;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 /* Music Card */
@@ -1231,30 +1594,32 @@ h2 {
 
 .flashcard-front {
   background-color: #3498db;
-  color: white;
+  color: #2c3e50;
 }
 
 .flashcard-back {
   background-color: #27ae60;
-  color: white;
+  color: #2c3e50;
   transform: rotateY(180deg);
 }
 
 /* Calculator */
 .calculator-card {
-  background: linear-gradient(135deg, #34495e, #2c3e50);
-  color: #fff;
+  background: linear-gradient(135deg, #e8eef5, #d5dce6);
+  color: #2c3e50;
   text-align: center;
 }
 
 .calculator .display {
-  background: rgba(255, 255, 255, 0.2);
+  background: white;
   padding: 1em;
   font-size: 1.5em;
   text-align: right;
   border-radius: 8px;
   margin-bottom: 1em;
   margin-top: 0.5em;
+  color: #2c3e50;
+  border: 2px solid #bdc3c7;
 }
 
 .calculator .buttons {
@@ -1264,16 +1629,21 @@ h2 {
 }
 
 .calculator .buttons button {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: white;
+  color: #2c3e50;
   font-size: 1.2em;
   padding: 15px;
-  border-radius: 5px;
-  transition: background 0.3s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid #ddd;
+  font-weight: 600;
 }
 
 .calculator .buttons button:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #6366f1;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
 }
 
 /* Study Tip Card */
@@ -1293,14 +1663,14 @@ h2 {
 
 /* Chat AI Card */
 .chat-ai-card {
-  background: linear-gradient(135deg, #8e44ad, #c39bd3);
-  color: #fff;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #2c3e50;
   padding: 1em;
   text-align: center;
 }
 
 .chat-box {
-  background: rgba(255, 255, 255, 0.1);
+  background: white;
   min-height: 300px;
   max-height: 600px;
   padding: 10px;
@@ -1311,13 +1681,14 @@ h2 {
   flex-direction: column;
   gap: 10px;
   word-wrap: break-word;
+  border: 2px solid #e3f2fd;
 }
 
 .chat-ai-card input {
   width: 100%;
   padding: 10px;
   margin-top: 1em;
-  border: 0.5px solid #333;
+  border: 2px solid #90caf9;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -1338,14 +1709,15 @@ h2 {
 
 .user-message {
   align-self: flex-end;
-  background-color: #34495e;
+  background-color: #6366f1;
+  color: white;
   max-width: 100%;
 }
 
 .ai-message {
   align-self: flex-start;
-  background-color: #27ae60;
-  color: #fff;
+  background-color: #e3f2fd;
+  color: #2c3e50;
   max-width: 100%;
   text-align: start;
 }
@@ -1371,8 +1743,8 @@ h2 {
 }
 
 .weather-card {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-  color: #fff;
+  background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+  color: #01579b;
   padding: 1.5em;
   text-align: center;
   border-radius: 15px;
@@ -1380,14 +1752,18 @@ h2 {
   transition: box-shadow 0.3s ease;
 }
 
+.weather-card h3 {
+  color: #01579b;
+}
+
 .weather-card input {
   width: 100%;
   padding: 10px;
   margin-top: 1em;
-  border: 0.5px solid #333;
+  border: 2px solid #4fc3f7;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: white;
+  color: #2c3e50;
 }
 
 .weather-card:hover {
@@ -1446,7 +1822,7 @@ h2 {
   border-radius: 5px;
   border: 0.5px solid #333;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: white;
+  color: #2c3e50;
 }
 
 .input-suggestions-container {
@@ -1569,43 +1945,231 @@ h2 {
 
 /* New Card: Daily Motivation */
 .motivation-card {
-  background: linear-gradient(135deg, #8e44ad, #9b59b6);
-  color: #fff;
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  color: #2c3e50;
   text-align: center;
 }
 
 .motivation-card p {
   font-size: 1.1em;
   margin-bottom: 15px;
-}
-
-.date-time-card {
-  background: rgba(57, 73, 171, 0.8); /* Semi-transparent royal blue */
-  color: #ffffff;
-  text-align: center;
-  padding: 1.2em;
-  border-radius: 15px;
-  margin: 0 auto 2em; /* Center horizontally and add bottom margin */
-  max-width: 320px; /* Slightly increase width */
-  font-size: 1.3em;
   font-weight: 500;
-  letter-spacing: 0.5px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
-  backdrop-filter: blur(5px); /* Glass effect */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition:
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth animation */
-}
-
-.date-time-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3); /* Smoother shadow transition */
 }
 
 .thank-you {
   text-align: center;
-  margin-top: 2em;
-  border-top: 1px solid #ddd;
+  padding: 48px 32px;
+  background: white;
+  margin-top: 0;
+}
+
+.thank-you p {
+  color: #64748b;
+  font-size: 1em;
+  font-weight: 500;
+  margin: 0;
+}
+
+.quick-access-section {
+  padding: 48px 32px;
+  background: white;
+}
+
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .quick-access-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+  }
+
+  .quick-card {
+    padding: 1.5em 1em;
+  }
+
+  .quick-card h4 {
+    font-size: 1.1em;
+  }
+
+  .quick-card p {
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-access-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.access-card {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.access-card:hover {
+  transform: translateY(-4px);
+  border-color: #6366f1;
+  background: white;
+}
+
+.access-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.access-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.access-card p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quick-card {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.quick-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.quick-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.quick-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.quick-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.quick-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.quick-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+.tool-card {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.date-time-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Time Tracker Card */
+.time-tracker-card {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+}
+
+.time-tracker-card .card-content {
+  padding: 10px 0;
+}
+
+/* Bookmarks Card */
+.bookmarks-card {
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
+  color: white;
+}
+
+.bookmark-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.bookmark-input input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.bookmarks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.bookmark-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.bookmark-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+  flex: 1;
+}
+
+.bookmark-item a:hover {
+  text-decoration: underline;
+}
+
+.bookmark-item .delete-btn {
+  background: rgba(239, 68, 68, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.bookmark-item .delete-btn:hover {
+  background: #ef4444;
+  transform: scale(1.1);
 }
 </style>

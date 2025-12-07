@@ -1,4 +1,12 @@
-const { User, Group } = require("../models/models");
+const {
+  User,
+  Group,
+  StudyMaterial,
+  Quiz,
+  StudySession,
+  Goal,
+  Event,
+} = require("../models/models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { successMessages, errorMessages } = require("../views/views");
@@ -921,5 +929,472 @@ exports.resetPassword = async (req, res) => {
       success: false,
       message: "Server error while resetting password.",
     });
+  }
+};
+
+exports.createStudyMaterial = async (req, res) => {
+  try {
+    const { title, description, category, content, fileUrl, tags } = req.body;
+    const userId = req.user.id;
+
+    const material = new StudyMaterial({
+      userId,
+      title,
+      description,
+      category,
+      content,
+      fileUrl,
+      tags,
+    });
+
+    await material.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Study material created successfully",
+      material,
+    });
+  } catch (error) {
+    console.error("Error creating study material:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getStudyMaterials = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { category } = req.query;
+
+    const filter = { userId };
+    if (category && category !== "All") {
+      filter.category = category;
+    }
+
+    const materials = await StudyMaterial.find(filter).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      materials,
+    });
+  } catch (error) {
+    console.error("Error fetching study materials:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.updateStudyMaterial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updates = req.body;
+
+    const material = await StudyMaterial.findOneAndUpdate(
+      { _id: id, userId },
+      { ...updates, updatedAt: Date.now() },
+      { new: true },
+    );
+
+    if (!material) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Material not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Material updated successfully",
+      material,
+    });
+  } catch (error) {
+    console.error("Error updating study material:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.deleteStudyMaterial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const material = await StudyMaterial.findOneAndDelete({ _id: id, userId });
+
+    if (!material) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Material not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Material deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting study material:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.createQuiz = async (req, res) => {
+  try {
+    const { title, description, category, questions } = req.body;
+    const userId = req.user.id;
+
+    const quiz = new Quiz({
+      userId,
+      title,
+      description,
+      category,
+      questions,
+    });
+
+    await quiz.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Quiz created successfully",
+      quiz,
+    });
+  } catch (error) {
+    console.error("Error creating quiz:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getQuizzes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { category } = req.query;
+
+    const filter = { userId };
+    if (category && category !== "All") {
+      filter.category = category;
+    }
+
+    const quizzes = await Quiz.find(filter).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      quizzes,
+    });
+  } catch (error) {
+    console.error("Error fetching quizzes:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.submitQuizAttempt = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { score, totalQuestions } = req.body;
+    const userId = req.user.id;
+
+    const quiz = await Quiz.findById(id);
+
+    if (!quiz) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Quiz not found" });
+    }
+
+    quiz.attempts.push({
+      userId,
+      score,
+      totalQuestions,
+      completedAt: new Date(),
+    });
+
+    await quiz.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Quiz attempt recorded",
+      quiz,
+    });
+  } catch (error) {
+    console.error("Error submitting quiz attempt:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.deleteQuiz = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const quiz = await Quiz.findOneAndDelete({ _id: id, userId });
+
+    if (!quiz) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Quiz not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Quiz deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting quiz:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.logStudySession = async (req, res) => {
+  try {
+    const { subject, duration, notes, productivity } = req.body;
+    const userId = req.user.id;
+
+    const session = new StudySession({
+      userId,
+      subject,
+      duration,
+      notes,
+      productivity,
+    });
+
+    await session.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Study session logged successfully",
+      session,
+    });
+  } catch (error) {
+    console.error("Error logging study session:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getStudySessions = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { startDate, endDate } = req.query;
+
+    const filter = { userId };
+
+    if (startDate && endDate) {
+      filter.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    const sessions = await StudySession.find(filter).sort({ date: -1 });
+
+    res.status(200).json({
+      success: true,
+      sessions,
+    });
+  } catch (error) {
+    console.error("Error fetching study sessions:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.createGoal = async (req, res) => {
+  try {
+    const { title, description, targetDate, category } = req.body;
+    const userId = req.user.id;
+
+    const goal = new Goal({
+      userId,
+      title,
+      description,
+      targetDate,
+      category,
+    });
+
+    await goal.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Goal created successfully",
+      goal,
+    });
+  } catch (error) {
+    console.error("Error creating goal:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getGoals = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const goals = await Goal.find({ userId }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      goals,
+    });
+  } catch (error) {
+    console.error("Error fetching goals:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.updateGoal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updates = req.body;
+
+    const goal = await Goal.findOneAndUpdate({ _id: id, userId }, updates, {
+      new: true,
+    });
+
+    if (!goal) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Goal not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Goal updated successfully",
+      goal,
+    });
+  } catch (error) {
+    console.error("Error updating goal:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.deleteGoal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const goal = await Goal.findOneAndDelete({ _id: id, userId });
+
+    if (!goal) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Goal not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Goal deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting goal:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.createEvent = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      startDate,
+      endDate,
+      category,
+      color,
+      allDay,
+      reminders,
+    } = req.body;
+    const userId = req.user.id;
+
+    const event = new Event({
+      userId,
+      title,
+      description,
+      startDate,
+      endDate,
+      category,
+      color,
+      allDay,
+      reminders,
+    });
+
+    await event.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Event created successfully",
+      event,
+    });
+  } catch (error) {
+    console.error("Error creating event:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getEvents = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { startDate, endDate } = req.query;
+
+    const filter = { userId };
+
+    if (startDate && endDate) {
+      filter.startDate = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    const events = await Event.find(filter).sort({ startDate: 1 });
+
+    res.status(200).json({
+      success: true,
+      events,
+    });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.updateEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updates = req.body;
+
+    const event = await Event.findOneAndUpdate({ _id: id, userId }, updates, {
+      new: true,
+    });
+
+    if (!event) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Event updated successfully",
+      event,
+    });
+  } catch (error) {
+    console.error("Error updating event:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const event = await Event.findOneAndDelete({ _id: id, userId });
+
+    if (!event) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Event deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

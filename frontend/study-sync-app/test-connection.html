@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudySync Backend Connection Test</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      h1 {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 2em;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+      }
+      .test-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+      }
+      .test-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+      }
+      button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        transition: transform 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+      }
+      button:active {
+        transform: translateY(0);
+      }
+      .result {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+      .info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+      }
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s linear infinite;
+        margin-left: 10px;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+      .badge-success {
+        background: #28a745;
+        color: white;
+      }
+      .badge-error {
+        background: #dc3545;
+        color: white;
+      }
+      .badge-info {
+        background: #17a2b8;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔌 Backend Connection Test</h1>
+      <p class="subtitle">
+        Test your frontend connection to the StudySync backend API
+      </p>
+
+      <div class="test-section">
+        <div class="test-title">
+          1. Health Check <span id="health-badge"></span>
+        </div>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result"></div>
+      </div>
+
+      <div class="test-section">
+        <div class="test-title">
+          2. API Documentation <span id="docs-badge"></span>
+        </div>
+        <button onclick="testDocs()">Test API Docs</button>
+        <button
+          onclick="window.open('https://studysync-backend-api.vercel.app/api-docs', '_blank')"
+        >
+          Open Docs
+        </button>
+        <div id="docs-result"></div>
+      </div>
+
+      <div class="test-section">
+        <div class="test-title">
+          3. Swagger JSON <span id="swagger-badge"></span>
+        </div>
+        <button onclick="testSwagger()">Test Swagger Endpoint</button>
+        <div id="swagger-result"></div>
+      </div>
+
+      <div class="test-section">
+        <div class="test-title">
+          4. Weather API <span id="weather-badge"></span>
+        </div>
+        <button onclick="testWeather()">Test Weather (London)</button>
+        <div id="weather-result"></div>
+      </div>
+
+      <div class="test-section">
+        <div class="test-title">5. CORS Test <span id="cors-badge"></span></div>
+        <button onclick="testCORS()">Test CORS</button>
+        <div id="cors-result"></div>
+      </div>
+
+      <div class="test-section">
+        <button
+          onclick="runAllTests()"
+          style="background: #28a745; font-size: 18px"
+        >
+          🚀 Run All Tests
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "https://studysync-backend-api.vercel.app";
+
+      function showLoading(elementId) {
+        document.getElementById(elementId).innerHTML =
+          '<div class="result info">Testing... <div class="loading"></div></div>';
+      }
+
+      function showResult(elementId, success, message, data = null) {
+        const badge = document.getElementById(
+          elementId.replace("-result", "-badge"),
+        );
+        if (badge) {
+          badge.className = `badge ${success ? "badge-success" : "badge-error"}`;
+          badge.textContent = success ? "✅ PASS" : "❌ FAIL";
+        }
+
+        let html = `<div class="result ${success ? "success" : "error"}">`;
+        html += `<strong>${success ? "✅ Success" : "❌ Error"}:</strong> ${message}`;
+        if (data) {
+          html += `\n\n<strong>Response:</strong>\n${JSON.stringify(data, null, 2)}`;
+        }
+        html += "</div>";
+        document.getElementById(elementId).innerHTML = html;
+      }
+
+      async function testHealth() {
+        showLoading("health-result");
+        try {
+          const response = await fetch(`${API_BASE}/health`);
+          const data = await response.json();
+
+          if (response.ok) {
+            showResult(
+              "health-result",
+              true,
+              "Backend is online and healthy!",
+              data,
+            );
+          } else {
+            showResult(
+              "health-result",
+              false,
+              `HTTP ${response.status}: ${response.statusText}`,
+              data,
+            );
+          }
+        } catch (error) {
+          showResult("health-result", false, `Network error: ${error.message}`);
+        }
+      }
+
+      async function testDocs() {
+        showLoading("docs-result");
+        try {
+          const response = await fetch(`${API_BASE}/api-docs`);
+
+          if (response.ok) {
+            showResult("docs-result", true, "API documentation is accessible!");
+          } else {
+            showResult(
+              "docs-result",
+              false,
+              `HTTP ${response.status}: ${response.statusText}`,
+            );
+          }
+        } catch (error) {
+          showResult("docs-result", false, `Network error: ${error.message}`);
+        }
+      }
+
+      async function testSwagger() {
+        showLoading("swagger-result");
+        try {
+          const response = await fetch(`${API_BASE}/swagger.json`);
+          const data = await response.json();
+
+          if (response.ok && data.openapi) {
+            showResult(
+              "swagger-result",
+              true,
+              `Swagger spec loaded successfully! (v${data.openapi})`,
+              {
+                title: data.info.title,
+                version: data.info.version,
+                endpoints: Object.keys(data.paths || {}).length,
+              },
+            );
+          } else {
+            showResult("swagger-result", false, "Invalid swagger spec", data);
+          }
+        } catch (error) {
+          showResult("swagger-result", false, `Error: ${error.message}`);
+        }
+      }
+
+      async function testWeather() {
+        showLoading("weather-result");
+        try {
+          const response = await fetch(`${API_BASE}/api/weather?city=London`);
+          const data = await response.json();
+
+          if (response.ok && data.success && data.data) {
+            showResult("weather-result", true, "Weather API works!", {
+              city: data.data.city,
+              temp: data.data.temp + "°C",
+              condition: data.data.condition,
+            });
+          } else {
+            showResult("weather-result", false, "Weather API failed", data);
+          }
+        } catch (error) {
+          showResult("weather-result", false, `Error: ${error.message}`);
+        }
+      }
+
+      async function testCORS() {
+        showLoading("cors-result");
+        try {
+          const response = await fetch(`${API_BASE}/health`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Origin: window.location.origin,
+            },
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            showResult("cors-result", true, "CORS is properly configured!", {
+              "Access-Control-Allow-Origin":
+                response.headers.get("Access-Control-Allow-Origin") ||
+                "Not set",
+              status: data,
+            });
+          } else {
+            showResult("cors-result", false, "CORS test failed", data);
+          }
+        } catch (error) {
+          if (error.message.includes("CORS")) {
+            showResult(
+              "cors-result",
+              false,
+              "CORS Error: Backend not allowing requests from this origin",
+            );
+          } else {
+            showResult("cors-result", false, `Error: ${error.message}`);
+          }
+        }
+      }
+
+      async function runAllTests() {
+        await testHealth();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await testDocs();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await testSwagger();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await testWeather();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await testCORS();
+      }
+
+      // Run health check on page load
+      window.addEventListener("load", () => {
+        testHealth();
+      });
+    </script>
+  </body>
+</html>

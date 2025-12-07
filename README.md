@@ -7,13 +7,6 @@ Welcome to **StudySync**! StudySync is a productivity and study tool designed to
 - [Features](#features)
 - [Live Deployment](#live-deployment)
 - [UI Screenshots](#ui-screenshots)
-  - [Home Page (Dashboard)](#home-page-dashboard)
-  - [Tools List](#tools-list)
-  - [Login Page](#login-page)
-  - [Register Page](#register-page)
-  - [Profile Page](#profile-page)
-  - [404 Page](#404-page)
-  - [Footer](#footer)
 - [Tech Stack](#tech-stack)
   - [Frontend](#frontend)
   - [Backend](#backend)
@@ -33,12 +26,19 @@ Welcome to **StudySync**! StudySync is a productivity and study tool designed to
 
 ## Features
 
+All the features of the StudySync app include:
+
 - **Pomodoro Timer**: A built-in timer for Pomodoro study sessions.
 - **Music Recommendations**: Get music suggestions based on mood using Spotify.
 - **Flashcards**: Create, manage, and study flashcards.
 - **To-Do List**: Track study tasks and assignments.
 - **Calculator**: A scientific calculator for quick calculations.
 - **AI Chat**: Chat with an AI assistant for study tips, help, and queries.
+- **Study Planner**: Plan and schedule your study sessions.
+- **Study Resources**: Access curated study materials and resources.
+- **Progress Tracking**: Monitor your study progress and achievements.
+- **Learning Goals**: Set and track your learning goals.
+- **Quiz Section**: Take quizzes to test your knowledge on various subjects.
 - **Weather Check**: Check the weather for any city using OpenWeather.
 - **Quick Notes**: Take and store quick notes for your studies.
 - **Daily Motivation**: Receive motivational quotes to keep you going.
@@ -54,11 +54,18 @@ The app is currently live at [https://study-sync-app.vercel.app/](https://study-
 
 The backend API is hosted on Render at [https://studysync-study-buddy-app.onrender.com](https://studysync-study-buddy-app.onrender.com/). The frontend is hosted on Vercel and communicates with the backend API for data retrieval and storage.
 
+> [!IMPORTANT]
 > **Note**: The app may take a while to spin up, which means it may take 2-3 minutes (max) to load the backend logic. This is due to Render's free tier resource limit, where we are only allocated 0.1 CPU and 512MB RAM. Thank you for your understanding!
 
 ## UI Screenshots
 
-Here are some placeholder UI images for the app:
+Here are some UI screenshots for the app:
+
+### Landing Page
+
+<p align="center">
+    <img src="img/landing_ui.png" alt="Landing Page UI" width="100%">
+</p>
 
 ### Home Page (Dashboard)
 
@@ -72,10 +79,40 @@ Here are some placeholder UI images for the app:
     <img src="img/tools_ui.png" alt="Pomodoro Timer UI" width="100%">
 </p>
 
-### Landing Page
+### Study Resources Page
 
 <p align="center">
-    <img src="img/landing_ui.png" alt="Landing Page UI" width="100%">
+    <img src="img/resources_ui.png" alt="Study Resources UI" width="100%">
+</p>
+
+### Study Planner Page
+
+<p align="center">
+    <img src="img/study_planner_ui.png" alt="Study Planner UI" width="100%">
+</p>
+
+### Study Materials Page
+
+<p align="center">
+    <img src="img/study_materials_ui.png" alt="Study Materials UI" width="100%">
+</p>
+
+### Learning Goals Page
+
+<p align="center">
+    <img src="img/goals_ui.png" alt="Learning Goals UI" width="100%">
+</p>
+
+### Progress Tracking Page
+
+<p align="center">
+    <img src="img/progress_tracker_ui.png" alt="Progress Tracking UI" width="100%">
+</p>
+
+### Quiz Section
+
+<p align="center">
+    <img src="img/quiz_ui.png" alt="Quiz Section UI" width="100%">
 </p>
 
 ### Login Page
@@ -88,30 +125,6 @@ Here are some placeholder UI images for the app:
 
 <p align="center">
     <img src="img/register_ui.png" alt="Weather Check UI" width="100%">
-</p>
-
-### Forgot Password Page
-
-<p align="center">
-    <img src="img/forgot_ui.png" alt="Forgot Password UI" width="100%">
-</p>
-
-### Profile Page
-
-<p align="center">
-    <img src="img/profile_ui.png" alt="Profile Page UI" width="100%">
-</p>
-
-### 404 Page
-
-<p align="center">
-    <img src="img/404_ui.png" alt="404 Page UI" width="100%">
-</p>
-
-### Footer
-
-<p align="center">
-    <img src="img/footer_ui.png" alt="Footer UI" width="100%">
 </p>
 
 ## Tech Stack
@@ -288,7 +301,7 @@ StudySync-Study-Buddy-App/
 ### Table of API Endpoints
 
 | **API Endpoint**            | **Method** | **Description**                                            |
-|-----------------------------|------------|------------------------------------------------------------|
+| --------------------------- | ---------- | ---------------------------------------------------------- |
 | `/auth/register`            | POST       | Registers a new user with name, email, and password.       |
 | `/auth/login`               | POST       | Authenticates the user and returns a JWT token.            |
 | `/profile/:userId?`         | GET        | Retrieves the profile data of the authenticated user.      |

@@ -199,7 +199,7 @@ let sessionHistory = {};
 
 const chatWithAI = async (sessionId, message, originalText = "") => {
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-flash-lite",
     systemInstruction: `${process.env.AI_INSTRUCTIONS}. Respond to the user conversationally.`,
   });
 
