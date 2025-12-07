@@ -1,170 +1,201 @@
 <template>
   <div class="profile-page">
-    <h2>User Profile</h2>
-
-    <!-- Loading Indicator -->
-    <div v-if="isLoading" class="loading-spinner-container">
+    <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
-      <div class="loading-text">Loading...</div>
+      <p>Loading profile...</p>
     </div>
 
-    <div v-else>
-      <!-- Avatar Section -->
-      <div class="avatar-section">
-        <img
-          :src="user.avatar || defaultAvatar"
-          alt="User Avatar"
-          class="avatar-img"
-        />
-        <div class="edit-avatar-container">
+    <div v-else class="profile-container">
+      <div class="profile-header">
+        <div class="avatar-container">
+          <img
+            :src="user.avatar || defaultAvatar"
+            alt="Avatar"
+            class="avatar"
+          />
           <button
-            v-if="!isEditingAvatar"
+            class="avatar-edit-btn"
             @click="editAvatar"
             :disabled="isSaving"
           >
-            Edit Avatar
-          </button>
-          <input
-            v-if="isEditingAvatar"
-            type="url"
-            v-model="newAvatar"
-            placeholder="Enter new avatar URL"
-            class="avatar-input"
-            :disabled="isSaving"
-          />
-          <button
-            v-if="isEditingAvatar"
-            @click="saveAvatar"
-            :disabled="isSaving"
-          >
-            <div v-if="isSaving" class="small-spinner"></div>
-            <span v-else>Save Avatar</span>
+            <span class="icon">📷</span>
           </button>
         </div>
+        <h1 class="user-name">{{ user.name }}</h1>
+        <p class="user-email">{{ user.email }}</p>
       </div>
 
-      <!-- Name Section -->
-      <div class="user-field">
-        <label for="name">Name</label>
-        <input
-          v-if="isEditingName"
-          v-model="newName"
-          type="text"
-          placeholder="Enter your name"
-          :disabled="isSaving"
-        />
-        <p v-else>{{ user.name }}</p>
-        <button v-if="!isEditingName" @click="editName" :disabled="isSaving">
-          Edit Name
-        </button>
-        <button v-if="isEditingName" @click="saveName" :disabled="isSaving">
-          <div v-if="isSaving" class="small-spinner"></div>
-          <span v-else>Save Name</span>
-        </button>
-      </div>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="card-header">
+            <span class="card-icon">👤</span>
+            <h3>Personal Info</h3>
+          </div>
+          <div class="info-row">
+            <label>Name</label>
+            <div class="info-content">
+              <input
+                v-if="isEditingName"
+                v-model="newName"
+                type="text"
+                :disabled="isSaving"
+              />
+              <span v-else>{{ user.name }}</span>
+              <button
+                @click="isEditingName ? saveName() : editName()"
+                :disabled="isSaving"
+              >
+                {{ isEditingName ? "✓" : "✏️" }}
+              </button>
+            </div>
+          </div>
+          <div class="info-row">
+            <label>Mood</label>
+            <div class="info-content">
+              <input
+                v-if="isEditingMood"
+                v-model="newMood"
+                type="text"
+                :disabled="isSaving"
+              />
+              <span v-else>{{ user.mood || "Not set" }}</span>
+              <button
+                @click="isEditingMood ? saveMood() : editMood()"
+                :disabled="isSaving"
+              >
+                {{ isEditingMood ? "✓" : "✏️" }}
+              </button>
+            </div>
+          </div>
+        </div>
 
-      <!-- Interests Section -->
-      <div class="user-field">
-        <label for="interests">Interests</label>
-        <input
-          v-if="isEditingInterests"
-          v-model="newInterests"
-          type="text"
-          placeholder="Enter interests separated by commas"
-          :disabled="isSaving"
-        />
-        <p v-else>{{ user.interests.join(", ") || "No interests added" }}</p>
-        <button
-          v-if="!isEditingInterests"
-          @click="editInterests"
-          :disabled="isSaving"
-        >
-          Edit Interests
-        </button>
-        <button
-          v-if="isEditingInterests"
-          @click="saveInterests"
-          :disabled="isSaving"
-        >
-          <div v-if="isSaving" class="small-spinner"></div>
-          <span v-else>Save Interests</span>
-        </button>
-      </div>
+        <div class="profile-card">
+          <div class="card-header">
+            <span class="card-icon">📚</span>
+            <h3>Courses</h3>
+          </div>
+          <div class="info-row full">
+            <div class="tags-container" v-if="!isEditingCourses">
+              <span v-for="course in user.courses" :key="course" class="tag">{{
+                course
+              }}</span>
+              <span
+                v-if="!user.courses || user.courses.length === 0"
+                class="empty"
+                >No courses</span
+              >
+            </div>
+            <input
+              v-else
+              v-model="newCourses"
+              type="text"
+              placeholder="comma separated"
+              :disabled="isSaving"
+            />
+            <button
+              @click="isEditingCourses ? saveCourses() : editCourses()"
+              :disabled="isSaving"
+            >
+              {{ isEditingCourses ? "✓ Save" : "✏️ Edit" }}
+            </button>
+          </div>
+        </div>
 
-      <!-- Mood Section -->
-      <div class="user-field">
-        <label for="mood">Mood</label>
-        <input
-          v-if="isEditingMood"
-          v-model="newMood"
-          type="text"
-          placeholder="Enter your mood"
-          :disabled="isSaving"
-        />
-        <p v-else>{{ user.mood }}</p>
-        <button v-if="!isEditingMood" @click="editMood" :disabled="isSaving">
-          Edit Mood
-        </button>
-        <button v-if="isEditingMood" @click="saveMood" :disabled="isSaving">
-          <div v-if="isSaving" class="small-spinner"></div>
-          <span v-else>Save Mood</span>
-        </button>
-      </div>
+        <div class="profile-card">
+          <div class="card-header">
+            <span class="card-icon">💡</span>
+            <h3>Interests</h3>
+          </div>
+          <div class="info-row full">
+            <div class="tags-container" v-if="!isEditingInterests">
+              <span
+                v-for="interest in user.interests"
+                :key="interest"
+                class="tag"
+                >{{ interest }}</span
+              >
+              <span
+                v-if="!user.interests || user.interests.length === 0"
+                class="empty"
+                >No interests</span
+              >
+            </div>
+            <input
+              v-else
+              v-model="newInterests"
+              type="text"
+              placeholder="comma separated"
+              :disabled="isSaving"
+            />
+            <button
+              @click="isEditingInterests ? saveInterests() : editInterests()"
+              :disabled="isSaving"
+            >
+              {{ isEditingInterests ? "✓ Save" : "✏️ Edit" }}
+            </button>
+          </div>
+        </div>
 
-      <!-- Available Times Section -->
-      <div class="user-field">
-        <label for="availableTimes">Available Times</label>
-        <input
-          v-if="isEditingAvailableTimes"
-          v-model="newAvailableTimes"
-          type="text"
-          placeholder="Enter available times separated by commas"
-          :disabled="isSaving"
-        />
-        <p v-else>{{ user.availableTimes.join(", ") || "No times set" }}</p>
-        <button
-          v-if="!isEditingAvailableTimes"
-          @click="editAvailableTimes"
-          :disabled="isSaving"
-        >
-          Edit Available Times
-        </button>
-        <button
-          v-if="isEditingAvailableTimes"
-          @click="saveAvailableTimes"
-          :disabled="isSaving"
-        >
-          <div v-if="isSaving" class="small-spinner"></div>
-          <span v-else>Save Times</span>
-        </button>
+        <div class="profile-card">
+          <div class="card-header">
+            <span class="card-icon">⏰</span>
+            <h3>Available Times</h3>
+          </div>
+          <div class="info-row full">
+            <div class="tags-container" v-if="!isEditingAvailableTimes">
+              <span
+                v-for="time in user.availableTimes"
+                :key="time"
+                class="tag"
+                >{{ time }}</span
+              >
+              <span
+                v-if="!user.availableTimes || user.availableTimes.length === 0"
+                class="empty"
+                >No times set</span
+              >
+            </div>
+            <input
+              v-else
+              v-model="newAvailableTimes"
+              type="text"
+              placeholder="comma separated"
+              :disabled="isSaving"
+            />
+            <button
+              @click="
+                isEditingAvailableTimes
+                  ? saveAvailableTimes()
+                  : editAvailableTimes()
+              "
+              :disabled="isSaving"
+            >
+              {{ isEditingAvailableTimes ? "✓ Save" : "✏️ Edit" }}
+            </button>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <!-- Courses Section -->
-      <div class="user-field">
-        <label for="courses">Courses</label>
+    <div
+      v-if="isEditingAvatar"
+      class="modal"
+      @click.self="isEditingAvatar = false"
+    >
+      <div class="modal-content">
+        <h3>Update Avatar</h3>
         <input
-          v-if="isEditingCourses"
-          v-model="newCourses"
-          type="text"
-          placeholder="Enter courses separated by commas"
+          v-model="newAvatar"
+          type="url"
+          placeholder="Enter image URL"
           :disabled="isSaving"
         />
-        <p v-else>{{ user.courses.join(", ") || "No courses added" }}</p>
-        <button
-          v-if="!isEditingCourses"
-          @click="editCourses"
-          :disabled="isSaving"
-        >
-          Edit Courses
-        </button>
-        <button
-          v-if="isEditingCourses"
-          @click="saveCourses"
-          :disabled="isSaving"
-        >
-          <div v-if="isSaving" class="small-spinner"></div>
-          <span v-else>Save Courses</span>
-        </button>
+        <div class="modal-actions">
+          <button @click="saveAvatar" :disabled="isSaving">Save</button>
+          <button @click="isEditingAvatar = false" class="cancel">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -228,7 +259,7 @@ export default {
 
       try {
         const { data } = await axios.get(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -253,7 +284,7 @@ export default {
       this.isSaving = true;
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { name: this.newName },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -274,7 +305,7 @@ export default {
       this.isSaving = true;
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { avatar: this.newAvatar },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -298,7 +329,7 @@ export default {
         .map((item) => item.trim());
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { interests: updatedInterests },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -319,7 +350,7 @@ export default {
       this.isSaving = true;
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { mood: this.newMood },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -343,7 +374,7 @@ export default {
         .map((item) => item.trim());
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { availableTimes: updatedTimes },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -367,7 +398,7 @@ export default {
         .map((item) => item.trim());
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { courses: updatedCourses },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -390,7 +421,7 @@ export default {
         .map((item) => item.trim());
       try {
         await axios.put(
-          "https://studysync-study-buddy-app.onrender.com/api/profile",
+          "https://studysync-backend-api.vercel.app/api/profile",
           { groups: updatedGroups },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -409,144 +440,292 @@ export default {
 
 <style scoped>
 .profile-page {
-  margin: 0 auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  font-family: "Poppins", sans-serif;
-  text-align: center;
-  max-width: 450px;
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 32px 16px;
 }
 
-h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-}
-
-.avatar-section {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.avatar-img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.avatar-input {
-  margin-top: 10px;
-  padding: 8px;
-  width: 80%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  padding: 10px 15px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-.user-info {
-  margin-bottom: 30px;
-}
-
-.user-field {
-  margin-bottom: 20px;
-}
-
-.user-field label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.user-field input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.actions {
-  text-align: center;
-}
-
-.actions button {
-  background-color: #f44336;
-  margin-top: 10px;
-}
-
-.actions button:hover {
-  background-color: #e53935;
-}
-
-.loading-spinner-container {
+.loading-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
+  justify-content: center;
+  min-height: 60vh;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #e0e0e0;
-  border-top: 5px solid #4caf50;
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
-
-.loading-text {
-  font-size: 20px;
-  font-family: "Poppins", sans-serif;
-  color: #4caf50;
+  margin-bottom: 16px;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
+  to {
     transform: rotate(360deg);
   }
 }
 
-.small-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #e0e0e0;
-  border-top: 2px solid #4caf50;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 48px 32px;
+  border-radius: 20px;
+  margin-bottom: 32px;
+  color: white;
+  position: relative;
+}
+
+.avatar-container {
+  position: relative;
   display: inline-block;
-  vertical-align: middle;
-  margin-right: 5px;
+  margin-bottom: 16px;
 }
 
-.edit-avatar-container {
-  margin-top: 10px;
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid white;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.edit-avatar-container button {
-  margin-top: 10px;
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 18px;
+}
+
+.user-name {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.user-email {
+  opacity: 0.9;
+  font-size: 1em;
+  margin: 0;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.card-icon {
+  font-size: 24px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.info-row {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.info-row.full {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.info-row label {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.9em;
+  min-width: 80px;
+}
+
+.info-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.info-content span {
+  flex: 1;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.info-content input,
+.info-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.info-content input:focus,
+.info-row input:focus {
+  border-color: #667eea;
+}
+
+.info-content button,
+.info-row button {
+  padding: 6px 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.info-content button:hover,
+.info-row button:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.info-content button:disabled,
+.info-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.empty {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-content h3 {
+  margin: 0 0 20px 0;
+  color: #1e293b;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 1em;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-actions button:first-child {
+  background: #667eea;
+  color: white;
+}
+
+.modal-actions button.cancel {
+  background: #e5e7eb;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 32px 20px;
+  }
+
+  .user-name {
+    font-size: 1.5em;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

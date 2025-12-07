@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudySync API Documentation</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css"
+    />
+    <link rel="icon" type="image/x-icon" href="/favicon.svg" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+      .topbar {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+      }
+      .swagger-ui .topbar-wrapper .link {
+        color: white !important;
+        font-weight: 600;
+      }
+      .swagger-ui .info .title {
+        color: #667eea;
+      }
+      .swagger-ui .scheme-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+      .loading-content {
+        text-align: center;
+        color: white;
+      }
+      .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 4px solid white;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <h2>Loading API Documentation...</h2>
+      </div>
+    </div>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js"></script>
+    <script>
+      window.onload = async () => {
+        const baseUrl = window.location.origin;
+        const swaggerUrl = `${baseUrl}/swagger.json`;
+
+        try {
+          // Fetch with timeout
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+          const response = await fetch(swaggerUrl, {
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const spec = await response.json();
+
+          // Hide loading overlay
+          document.getElementById("loading").classList.add("hidden");
+
+          // Initialize Swagger UI
+          window.ui = SwaggerUIBundle({
+            spec: spec,
+            dom_id: "#swagger-ui",
+            presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+            plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+            layout: "StandaloneLayout",
+            deepLinking: true,
+            displayOperationId: false,
+            defaultModelsExpandDepth: 1,
+            defaultModelExpandDepth: 1,
+            docExpansion: "list",
+            filter: true,
+            showExtensions: true,
+            showCommonExtensions: true,
+            tryItOutEnabled: true,
+            requestSnippetsEnabled: true,
+            persistAuthorization: true,
+          });
+        } catch (error) {
+          console.error("Error loading Swagger spec:", error);
+
+          document.getElementById("loading").innerHTML = `
+            <div class="loading-content">
+              <h2 style="color: #f44336;">⚠️ Failed to Load API Documentation</h2>
+              <p style="margin: 20px 0; max-width: 600px;">
+                Could not fetch the API specification from:<br>
+                <code style="background: rgba(0,0,0,0.2); padding: 5px 10px; 
+                border-radius: 5px; display: inline-block; margin-top: 10px;">
+                  ${swaggerUrl}
+                </code>
+              </p>
+              <p style="color: rgba(255,255,255,0.8);">
+                Error: ${error.message}
+              </p>
+              <button onclick="window.location.reload()" 
+                style="padding: 12px 24px; background: white; color: #667eea; 
+                border: none; border-radius: 8px; cursor: pointer; 
+                font-size: 16px; margin-top: 20px; font-weight: 600;">
+                🔄 Retry
+              </button>
+              <br><br>
+              <a href="/" style="color: white; text-decoration: none; 
+                background: rgba(255,255,255,0.2); padding: 10px 20px; 
+                border-radius: 8px; display: inline-block; margin-top: 10px;">
+                ← Back to Home
+              </a>
+              <br><br>
+              <details style="margin-top: 30px; text-align: left; 
+                max-width: 600px; margin-left: auto; margin-right: auto;">
+                <summary style="cursor: pointer; font-weight: 600;">
+                  🔧 Troubleshooting Tips
+                </summary>
+                <ul style="text-align: left; padding: 20px; 
+                  background: rgba(0,0,0,0.2); border-radius: 5px; margin-top: 10px;">
+                  <li>Check if the API server is running</li>
+                  <li>Verify the backend is deployed on Vercel</li>
+                  <li>Ensure CORS is properly configured</li>
+                  <li>Check browser console for detailed errors</li>
+                  <li>Try accessing <a href="${swaggerUrl}" target="_blank" 
+                    style="color: white;">${swaggerUrl}</a> directly</li>
+                </ul>
+              </details>
+            </div>
+          `;
+        }
+      };
+    </script>
+  </body>
+</html>

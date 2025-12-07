@@ -7,6 +7,12 @@ import store from "../store";
 import NotFound from "@/components/NotFound.vue";
 import LandingPage from "@/components/LandingPage.vue";
 import ForgotPassword from "@/components/ForgotPassword.vue";
+import StudyMaterialsPage from "../views/StudyMaterialsPage.vue";
+import QuizPage from "../views/QuizPage.vue";
+import ProgressTrackerPage from "../views/ProgressTrackerPage.vue";
+import GoalsPage from "../views/GoalsPage.vue";
+import StudyPlannerPage from "../views/StudyPlannerPage.vue";
+import ResourcesPage from "../views/ResourcesPage.vue";
 
 const routes = [
   { path: "/", component: HomePage, meta: { requiresAuth: true } },
@@ -16,6 +22,24 @@ const routes = [
   { path: "/profile", component: UserProfile, meta: { requiresAuth: true } },
   { path: "/landing", component: LandingPage },
   { path: "/forgot-password", component: ForgotPassword },
+  {
+    path: "/materials",
+    component: StudyMaterialsPage,
+    meta: { requiresAuth: true },
+  },
+  { path: "/quizzes", component: QuizPage, meta: { requiresAuth: true } },
+  {
+    path: "/progress",
+    component: ProgressTrackerPage,
+    meta: { requiresAuth: true },
+  },
+  { path: "/goals", component: GoalsPage, meta: { requiresAuth: true } },
+  {
+    path: "/planner",
+    component: StudyPlannerPage,
+    meta: { requiresAuth: true },
+  },
+  { path: "/resources", component: ResourcesPage },
   { path: "/:catchAll(.*)", component: NotFound },
 ];
 

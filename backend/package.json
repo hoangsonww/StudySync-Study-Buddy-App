@@ -2,11 +2,18 @@
   "name": "studysync",
   "version": "1.0.0",
   "description": "StudySync is a suite of tools that help students study more effectively.",
-  "main": "app.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "dev": "nodemon app.js",
+    "start": "node local-dev.js",
+    "dev": "nodemon local-dev.js",
+    "test-swagger": "node test-swagger.js",
+    "vercel": "vercel",
+    "vercel-prod": "vercel --prod",
+    "vercel-build": "echo 'Building for Vercel'",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=18.x"
   },
   "private": false,
   "dependencies": {
@@ -19,8 +26,10 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
-    "nodemon": "^3.1.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
