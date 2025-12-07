@@ -642,9 +642,11 @@ exports.aiChat = async (req, res) => {
     });
   } catch (error) {
     console.error("AI chat error:", error);
-    res
-      .status(500)
-      .json({ success: false, message: errorMessages.aiChatFailed });
+    res.status(500).json({
+      success: false,
+      message: errorMessages.aiChatFailed,
+      error: error.message || "Unknown error occurred",
+    });
   }
 };
 

@@ -522,7 +522,7 @@ export default {
 
 .stats-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 2rem;
   max-width: 1000px;
   margin: 0 auto;
@@ -530,10 +530,11 @@ export default {
 
 .stat-card {
   text-align: center;
-  padding: 2rem;
+  padding: 2rem 1.5rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 16px;
   transition: transform 0.3s ease;
+  overflow: hidden;
 }
 
 .stat-card:hover {
@@ -541,19 +542,23 @@ export default {
 }
 
 .stat-number {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 0.5rem;
+  line-height: 1.2;
+  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .stat-label {
   color: #64748b;
   font-size: 1rem;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 /* Features Section */
@@ -935,6 +940,23 @@ export default {
 
   .section-title {
     font-size: 2rem;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
   }
 
   .cta-buttons {
