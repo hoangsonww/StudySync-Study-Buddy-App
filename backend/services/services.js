@@ -227,8 +227,8 @@ const chatWithAI = async (sessionId, message, originalText = "") => {
 
     return result.response.text();
   } catch (error) {
-    console.error("Error in AI chat:", error.message);
-    throw new Error("Failed to get AI response");
+    console.error("Error in AI chat:", error);
+    throw error;
   }
 };
 
