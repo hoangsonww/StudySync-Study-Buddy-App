@@ -6,9 +6,90 @@ const { User, Group } = require("../models/models");
 require("dotenv").config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_TOKEN);
+const GEMINI_MODELS_ENDPOINT =
+  "https://generativelanguage.googleapis.com/v1/models";
+const GEMINI_MODEL_CACHE_TTL_MS = 10 * 60 * 1000;
+const FALLBACK_GEMINI_MODELS = ["gemini-2.5-flash"];
+
+let geminiModelCache = { models: [], fetchedAt: 0 };
+let geminiModelFetchPromise = null;
+let geminiModelRotationIndex = 0;
 
 let spotifyAccessToken = null;
 let spotifyTokenExpiry = null;
+
+const normalizeGeminiModelName = (name = "") => name.replace(/^models\//, "");
+
+const isSupportedGeminiModel = (model = {}) => {
+  const name = (model.name || "").toLowerCase();
+  if (!name.includes("gemini")) {
+    return false;
+  }
+  if (name.includes("embedding") || name.includes("-pro")) {
+    return false;
+  }
+
+  const supportedMethods = model.supportedGenerationMethods || [];
+  return supportedMethods.includes("generateContent");
+};
+
+const fetchGeminiModels = async () => {
+  const apiKey = process.env.GEMINI_API_TOKEN;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_TOKEN is not configured");
+  }
+
+  const response = await axios.get(GEMINI_MODELS_ENDPOINT, {
+    params: { key: apiKey },
+  });
+
+  const models = (response.data?.models || [])
+    .filter(isSupportedGeminiModel)
+    .map((model) => normalizeGeminiModelName(model.name));
+
+  const uniqueModels = [...new Set(models)];
+
+  if (!uniqueModels.length) {
+    throw new Error("No supported Gemini models available");
+  }
+
+  return uniqueModels;
+};
+
+const getGeminiModels = async () => {
+  const now = Date.now();
+  const cacheAge = now - geminiModelCache.fetchedAt;
+  if (geminiModelCache.models.length && cacheAge < GEMINI_MODEL_CACHE_TTL_MS) {
+    return geminiModelCache.models;
+  }
+
+  if (geminiModelFetchPromise) {
+    return geminiModelFetchPromise;
+  }
+
+  geminiModelFetchPromise = fetchGeminiModels()
+    .then((models) => {
+      geminiModelCache = { models, fetchedAt: Date.now() };
+      return models;
+    })
+    .catch((error) => {
+      console.error("Error fetching Gemini models:", error.message);
+      if (geminiModelCache.models.length) {
+        return geminiModelCache.models;
+      }
+      return FALLBACK_GEMINI_MODELS;
+    })
+    .finally(() => {
+      geminiModelFetchPromise = null;
+    });
+
+  return geminiModelFetchPromise;
+};
+
+const getRotatedModels = (models, startIndex) => {
+  const safeStartIndex = startIndex % models.length;
+  return models.slice(safeStartIndex).concat(models.slice(0, safeStartIndex));
+};
 
 const getSpotifyAccessToken = async () => {
   if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) {
@@ -198,10 +279,10 @@ const createStudySession = async (groupId, date, musicMood) => {
 let sessionHistory = {};
 
 const chatWithAI = async (sessionId, message, originalText = "") => {
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-lite",
-    systemInstruction: `${process.env.AI_INSTRUCTIONS}. Respond to the user conversationally.`,
-  });
+  const models = await getGeminiModels();
+  if (!models.length) {
+    throw new Error("No Gemini models available");
+  }
 
   if (!sessionHistory[sessionId]) {
     sessionHistory[sessionId] = [];
@@ -214,22 +295,38 @@ const chatWithAI = async (sessionId, message, originalText = "") => {
   }
   history.push({ role: "user", parts: [{ text: message }] });
 
-  try {
-    const chatSession = model.startChat({ history });
-    const result = await chatSession.sendMessage(message);
+  const orderedModels = getRotatedModels(models, geminiModelRotationIndex);
+  let lastError = null;
 
-    if (!result.response || !result.response.text) {
-      throw new Error("Failed to get a response from AI.");
+  for (let index = 0; index < orderedModels.length; index += 1) {
+    const modelName = orderedModels[index];
+    try {
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        systemInstruction: `${process.env.AI_INSTRUCTIONS}. Respond to the user conversationally.`,
+      });
+      const chatSession = model.startChat({ history });
+      const result = await chatSession.sendMessage(message);
+
+      if (!result.response || typeof result.response.text !== "function") {
+        throw new Error("Failed to get a response from AI.");
+      }
+
+      const responseText = result.response.text();
+      history.push({ role: "model", parts: [{ text: responseText }] });
+      sessionHistory[sessionId] = history;
+
+      const usedIndex = (geminiModelRotationIndex + index) % models.length;
+      geminiModelRotationIndex = (usedIndex + 1) % models.length;
+
+      return responseText;
+    } catch (error) {
+      lastError = error;
+      console.error(`Error in AI chat with model ${modelName}:`, error);
     }
-
-    history.push({ role: "model", parts: [{ text: result.response.text() }] });
-    sessionHistory[sessionId] = history;
-
-    return result.response.text();
-  } catch (error) {
-    console.error("Error in AI chat:", error);
-    throw error;
   }
+
+  throw lastError || new Error("All Gemini models failed.");
 };
 
 const clearSessionHistory = (sessionId) => {
