@@ -29,9 +29,9 @@
         <v-col class="d-none d-md-flex justify-end align-center">
           <v-btn
             text
-            to="/"
+            to="/home"
             class="nav-btn"
-            :class="{ 'active-link': $route.path === '/' }"
+            :class="{ 'active-link': $route.path === '/home' }"
             style="
               font-family: &quot;Poppins&quot;, sans-serif;
               font-size: 16px;
@@ -143,11 +143,10 @@
             v-if="isAuthenticated"
             text
             @click="logout"
-            class="nav-btn"
+            class="nav-btn logout-btn"
             style="
               font-family: &quot;Poppins&quot;, sans-serif;
               font-size: 16px;
-              color: red;
             "
           >
             <v-icon class="nav-icon">mdi-logout</v-icon> Logout
@@ -176,7 +175,7 @@
     class="indigo darken-3"
   >
     <v-list dense class="mobile-drawer-list">
-      <v-list-item to="/" @click="closeDrawer" class="mobile-nav-item">
+      <v-list-item to="/home" @click="closeDrawer" class="mobile-nav-item">
         <v-list-item-icon>
           <v-icon class="mobile-nav-icon">mdi-home</v-icon>
         </v-list-item-icon>
@@ -286,11 +285,10 @@
       <v-list-item
         v-if="isAuthenticated"
         @click="logoutAndCloseDrawer"
-        class="mobile-nav-item"
-        style="color: red"
+        class="mobile-nav-item mobile-logout-item"
       >
         <v-list-item-icon>
-          <v-icon class="mobile-nav-icon" style="color: red">mdi-logout</v-icon>
+          <v-icon class="mobile-nav-icon">mdi-logout</v-icon>
         </v-list-item-icon>
         <v-list-item-content
           style="font-family: &quot;Poppins&quot;, sans-serif; font-size: 16px"
@@ -317,7 +315,7 @@ export default {
   },
   methods: {
     goToLanding() {
-      this.$router.push("/landing"); // Navigate to the landing page
+      this.$router.push("/"); // Navigate to the landing page
     },
     ...mapActions(["logout"]), // Vuex action for logging out
     closeDrawer() {
@@ -392,6 +390,10 @@ export default {
   cursor: pointer;
 }
 
+.title {
+  font-weight: 700 !important;
+}
+
 .modern-navbar {
   border-bottom: 1px solid #e0e0e0 !important;
   padding: 8px 0 !important;
@@ -433,6 +435,17 @@ export default {
 .active-link {
   background: rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
+.logout-btn,
+.logout-btn .v-icon {
+  color: #d32f2f !important;
+}
+
+.mobile-logout-item,
+.mobile-logout-item .mobile-nav-icon,
+.mobile-logout-item .v-list-item-content {
+  color: #d32f2f !important;
 }
 
 .mobile-nav-item {

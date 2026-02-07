@@ -99,7 +99,7 @@ export default {
         await this.login({ email: this.email, password: this.password });
 
         // Redirect to dashboard on successful login
-        this.$router.push("/");
+        this.$router.push("/home");
       } catch (error) {
         // If an error occurs, set the error message
         this.errorMessage =

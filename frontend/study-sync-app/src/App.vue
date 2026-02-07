@@ -6,7 +6,7 @@
         <router-view />
       </div>
     </v-main>
-    <Footer />
+    <Footer v-if="showFooter" />
   </v-app>
 </template>
 
@@ -22,6 +22,9 @@ export default {
   computed: {
     showNavbar() {
       return !this.$route.meta.hideNavbar;
+    },
+    showFooter() {
+      return !this.$route.meta.hideFooter;
     },
   },
 };

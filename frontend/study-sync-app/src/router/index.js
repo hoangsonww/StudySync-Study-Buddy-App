@@ -15,12 +15,20 @@ import StudyPlannerPage from "../views/StudyPlannerPage.vue";
 import ResourcesPage from "../views/ResourcesPage.vue";
 
 const routes = [
-  { path: "/", component: HomePage, meta: { requiresAuth: true } },
+  {
+    path: "/",
+    component: LandingPage,
+    meta: { hideNavbar: true, hideFooter: true },
+  },
   { path: "/home", component: HomePage, meta: { requiresAuth: true } },
   { path: "/register", component: UserRegister },
   { path: "/login", component: UserLogin },
   { path: "/profile", component: UserProfile, meta: { requiresAuth: true } },
-  { path: "/landing", component: LandingPage, meta: { hideNavbar: true } },
+  {
+    path: "/landing",
+    component: LandingPage,
+    meta: { hideNavbar: true, hideFooter: true },
+  },
   { path: "/forgot-password", component: ForgotPassword },
   {
     path: "/materials",
