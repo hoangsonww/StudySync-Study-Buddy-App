@@ -20,7 +20,7 @@ const routes = [
   { path: "/register", component: UserRegister },
   { path: "/login", component: UserLogin },
   { path: "/profile", component: UserProfile, meta: { requiresAuth: true } },
-  { path: "/landing", component: LandingPage },
+  { path: "/landing", component: LandingPage, meta: { hideNavbar: true } },
   { path: "/forgot-password", component: ForgotPassword },
   {
     path: "/materials",
