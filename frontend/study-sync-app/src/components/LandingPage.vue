@@ -20,7 +20,13 @@
               Academic Performance Platform
             </p>
             <h1 class="hero-title" data-animate>
-              Professional Study Operations for Modern Learners
+              <span class="hero-title-line"
+                >Professional Study Operations for</span
+              >
+              <span class="typed-line">
+                <span class="typed-word">{{ typedAudience }}</span>
+                <span class="typed-cursor" aria-hidden="true">|</span>
+              </span>
             </h1>
             <p class="hero-subtitle" data-animate>
               Plan workload, track learning velocity, and coordinate focused
@@ -552,6 +558,22 @@ export default {
           text: "From single-course planning to full-term workloads, StudySync remains responsive and manageable as complexity grows.",
         },
       ],
+      typedAudiences: [
+        "Modern Learners",
+        "Focused Scholars",
+        "Driven Students",
+        "Academic Achievers",
+        "Disciplined Minds",
+        "Serious Students",
+        "Committed Learners",
+        "Goal-Oriented Scholars",
+        "Dedicated Students",
+      ],
+      typedAudience: "",
+      currentTypedAudienceIndex: 0,
+      typedCharIndex: 0,
+      isDeletingTypedAudience: false,
+      typingTimer: null,
       currentYear: new Date().getFullYear(),
       revealObserver: null,
       counterObserver: null,
@@ -560,6 +582,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.initializeAnimations();
+      this.startTypedAudienceLoop();
     });
   },
   beforeUnmount() {
@@ -568,6 +591,10 @@ export default {
     }
     if (this.counterObserver) {
       this.counterObserver.disconnect();
+    }
+    if (this.typingTimer) {
+      window.clearTimeout(this.typingTimer);
+      this.typingTimer = null;
     }
   },
   methods: {
@@ -579,6 +606,59 @@ export default {
     },
     navigateToLogin() {
       this.$router.push("/login");
+    },
+    startTypedAudienceLoop() {
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (reduceMotion) {
+        this.typedAudience = this.typedAudiences[0] || "";
+        return;
+      }
+
+      if (this.typingTimer) {
+        window.clearTimeout(this.typingTimer);
+      }
+      this.runTypedAudienceTick();
+    },
+    runTypedAudienceTick() {
+      if (!this.typedAudiences.length) {
+        return;
+      }
+
+      const activeAudience =
+        this.typedAudiences[this.currentTypedAudienceIndex] || "";
+
+      if (this.isDeletingTypedAudience) {
+        this.typedCharIndex = Math.max(this.typedCharIndex - 1, 0);
+      } else {
+        this.typedCharIndex = Math.min(
+          this.typedCharIndex + 1,
+          activeAudience.length,
+        );
+      }
+
+      this.typedAudience = activeAudience.slice(0, this.typedCharIndex);
+
+      let delay = this.isDeletingTypedAudience ? 55 : 95;
+
+      if (
+        !this.isDeletingTypedAudience &&
+        this.typedCharIndex === activeAudience.length
+      ) {
+        this.isDeletingTypedAudience = true;
+        delay = 1300;
+      } else if (this.isDeletingTypedAudience && this.typedCharIndex === 0) {
+        this.isDeletingTypedAudience = false;
+        this.currentTypedAudienceIndex =
+          (this.currentTypedAudienceIndex + 1) % this.typedAudiences.length;
+        delay = 360;
+      }
+
+      this.typingTimer = window.setTimeout(() => {
+        this.runTypedAudienceTick();
+      }, delay);
     },
     getStaggerStyle(index, step = 70, max = 350) {
       return { "--reveal-delay": `${Math.min(index * step, max)}ms` };
@@ -807,13 +887,18 @@ export default {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: clamp(1.2rem, 3vw, 2.2rem);
+  grid-template-columns: minmax(0, 920px);
+  justify-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: clamp(1.1rem, 2.2vw, 1.9rem);
   align-items: center;
 }
 
 .hero-copy {
-  max-width: 700px;
+  max-width: 920px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .hero-eyebrow {
@@ -838,18 +923,48 @@ export default {
   margin-bottom: 1.15rem;
 }
 
+.hero-title-line {
+  display: block;
+}
+
+.typed-line {
+  margin-top: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.14rem;
+  min-height: 1.2em;
+}
+
+.typed-word {
+  display: inline-block;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #b8e8ff 0%, #8cd3ff 58%, #d9f2ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.typed-cursor {
+  color: #bfe9ff;
+  animation: typedCursorBlink 1s steps(1, end) infinite;
+}
+
 .hero-subtitle {
   max-width: 62ch;
   font-size: clamp(1rem, 1.4vw, 1.18rem);
   color: rgba(238, 248, 255, 0.92);
   line-height: 1.72;
   margin-bottom: 1.8rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.85rem;
+  justify-content: center;
   margin-bottom: 1.35rem;
 }
 
@@ -909,13 +1024,16 @@ export default {
   gap: 1rem;
   list-style: none;
   padding: 0;
+  justify-content: center;
   color: rgba(238, 248, 255, 0.9);
   font-size: 0.92rem;
 }
 
 .hero-trust-line li {
-  position: relative;
-  padding-left: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
 }
 
 .hero-trust-line li::before {
@@ -924,9 +1042,7 @@ export default {
   height: 0.44rem;
   border-radius: 50%;
   background: #93ddff;
-  position: absolute;
-  left: 0;
-  top: 0.38rem;
+  flex-shrink: 0;
 }
 
 .hero-panel {
@@ -934,6 +1050,9 @@ export default {
   border: 1px solid rgba(202, 228, 250, 0.28);
   border-radius: var(--landing-radius-xl);
   padding: clamp(1.2rem, 2.2vw, 1.8rem);
+  width: min(760px, 100%);
+  margin: 0 auto;
+  text-align: center;
   backdrop-filter: blur(8px);
   box-shadow: 0 24px 50px rgba(6, 24, 38, 0.35);
 }
@@ -1418,6 +1537,17 @@ export default {
   }
 }
 
+@keyframes typedCursorBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (max-width: 1080px) {
   .hero-grid {
     grid-template-columns: 1fr;
@@ -1469,6 +1599,7 @@ export default {
 
   .hero-trust-line {
     flex-direction: column;
+    align-items: center;
     gap: 0.55rem;
   }
 
@@ -1516,6 +1647,10 @@ export default {
   [data-animate] {
     animation: none !important;
     transition: none !important;
+  }
+
+  .typed-cursor {
+    animation: none !important;
   }
 }
 </style>

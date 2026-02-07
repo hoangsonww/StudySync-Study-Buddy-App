@@ -2,3 +2,5 @@
 /backend/node_modules
 /node_modules
 /frontend/study-sync-app/.env
+.vercel
+.env*.local
