@@ -25,6 +25,10 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
+:root {
+  --app-font-family: "Poppins", sans-serif;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -38,11 +42,21 @@ body {
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  font-family: "Poppins", sans-serif;
+  font-family: var(--app-font-family) !important;
 }
 
-.v-application {
-  font-family: "Poppins", "Roboto", sans-serif !important;
+#app,
+.v-application,
+.v-application * {
+  font-family: var(--app-font-family) !important;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace !important;
 }
 
 .no-scroll-container .v-application__wrap,

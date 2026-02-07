@@ -11,7 +11,7 @@ export async function loadFonts() {
 
   webFontLoader.load({
     google: {
-      families: ["Roboto:100,300,400,500,700,900&display=swap"],
+      families: ["Poppins:300,400,500,600,700,800&display=swap"],
     },
   });
 }
