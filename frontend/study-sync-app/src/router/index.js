@@ -52,7 +52,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/landing");
+    next("/login");
   } else {
     next();
   }
