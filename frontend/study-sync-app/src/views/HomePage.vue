@@ -579,7 +579,7 @@ export default {
     next((vm) => {
       if (!vm.token) {
         alert("You need to log in first!"); // Show alert
-        vm.$router.push("/landing"); // Then redirect
+        vm.$router.push("/login"); // Then redirect
       } else {
         next(); // Proceed to the route if authenticated
       }
