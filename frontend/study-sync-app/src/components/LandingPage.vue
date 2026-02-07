@@ -291,7 +291,7 @@ export default {
   },
   methods: {
     navigateToApp() {
-      this.$router.push("/register");
+      this.$router.push("/");
     },
   },
 };

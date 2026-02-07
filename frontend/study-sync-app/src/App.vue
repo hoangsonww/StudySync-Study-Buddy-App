@@ -1,6 +1,6 @@
 <template>
   <v-app class="no-scroll-container">
-    <Navbar />
+    <Navbar v-if="showNavbar" />
     <v-main>
       <div class="main-content">
         <router-view />
@@ -18,6 +18,11 @@ export default {
   components: {
     Navbar,
     Footer,
+  },
+  computed: {
+    showNavbar() {
+      return !this.$route.meta.hideNavbar;
+    },
   },
 };
 </script>
