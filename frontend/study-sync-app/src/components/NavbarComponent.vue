@@ -40,7 +40,7 @@
             <v-icon class="nav-icon">mdi-home</v-icon> Home
           </v-btn>
 
-          <v-menu v-if="isAuthenticated" open-on-hover>
+          <v-menu open-on-hover>
             <template v-slot:activator="{ props }">
               <v-btn
                 text
@@ -175,7 +175,7 @@
     overlay
     class="indigo darken-3"
   >
-    <v-list dense>
+    <v-list dense class="mobile-drawer-list">
       <v-list-item to="/" @click="closeDrawer" class="mobile-nav-item">
         <v-list-item-icon>
           <v-icon class="mobile-nav-icon">mdi-home</v-icon>
@@ -186,7 +186,7 @@
         >
       </v-list-item>
 
-      <v-list-group v-if="isAuthenticated" value="tools">
+      <v-list-group value="tools">
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props">
             <v-list-item-icon>
@@ -455,6 +455,10 @@ export default {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
+.mobile-drawer-list {
+  padding-top: 24px !important;
+}
+
 .v-list-item {
   transition: background-color 0.3s ease;
 }
@@ -469,7 +473,7 @@ export default {
 }
 
 .mobile-menu-icon {
-  color: #ffffff;
+  color: #1f2937 !important;
   font-size: 26px;
 }
 </style>

@@ -1252,7 +1252,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .tool-header h3 {
