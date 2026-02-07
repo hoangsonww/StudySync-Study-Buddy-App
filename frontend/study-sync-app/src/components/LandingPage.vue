@@ -239,6 +239,65 @@
         </div>
       </div>
     </section>
+
+    <footer class="landing-footer" data-animate>
+      <div class="section-shell landing-footer-shell">
+        <div class="footer-brand">
+          <div class="footer-brand-line">
+            <span class="brand-dot"></span>
+            <span class="footer-brand-name">StudySync</span>
+          </div>
+          <p>
+            Professional study operations platform for planning, execution, and
+            measurable learning outcomes.
+          </p>
+        </div>
+
+        <div class="footer-grid">
+          <div class="footer-column">
+            <h3>Platform</h3>
+            <button class="footer-link" @click="navigateToRegister">
+              Create Account
+            </button>
+            <button class="footer-link" @click="navigateToLogin">
+              Sign In
+            </button>
+            <button class="footer-link" @click="navigateToApp">
+              Workspace
+            </button>
+            <button class="footer-link" @click="$router.push('/resources')">
+              Resources
+            </button>
+          </div>
+
+          <div class="footer-column">
+            <h3>Tools</h3>
+            <button class="footer-link" @click="$router.push('/materials')">
+              Study Materials
+            </button>
+            <button class="footer-link" @click="$router.push('/planner')">
+              Study Planner
+            </button>
+            <button class="footer-link" @click="$router.push('/goals')">
+              Goals
+            </button>
+            <button class="footer-link" @click="$router.push('/progress')">
+              Progress Tracker
+            </button>
+          </div>
+
+          <div class="footer-column">
+            <h3>Contact</h3>
+            <p>Support: hoangson091104@gmail.com</p>
+            <p>Available across desktop and mobile.</p>
+            <p>Built for focused, accountable learners.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; {{ currentYear }} StudySync. All rights reserved.</p>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -493,6 +552,7 @@ export default {
           text: "From single-course planning to full-term workloads, StudySync remains responsive and manageable as complexity grows.",
         },
       ],
+      currentYear: new Date().getFullYear(),
       revealObserver: null,
       counterObserver: null,
     };
@@ -512,7 +572,7 @@ export default {
   },
   methods: {
     navigateToApp() {
-      this.$router.push("/");
+      this.$router.push("/home");
     },
     navigateToRegister() {
       this.$router.push("/register");
@@ -1210,6 +1270,99 @@ export default {
   color: #5f7489;
 }
 
+.landing-footer {
+  background: linear-gradient(165deg, #0d2236 0%, #14324f 58%, #0f4b6f 100%);
+  color: #eaf4ff;
+  padding: 2.6rem 0 0;
+}
+
+.landing-footer-shell {
+  display: grid;
+  grid-template-columns: 1.1fr 1.9fr;
+  gap: 1.4rem;
+}
+
+.footer-brand {
+  border: 1px solid rgba(192, 220, 247, 0.25);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+}
+
+.footer-brand-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.65rem;
+}
+
+.footer-brand-name {
+  font-family: "Sora", "Manrope", sans-serif !important;
+  font-size: 1.1rem;
+}
+
+.footer-brand p {
+  color: rgba(227, 241, 255, 0.9);
+  line-height: 1.65;
+  font-size: 0.94rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.footer-column {
+  border: 1px solid rgba(191, 219, 245, 0.22);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem;
+  display: grid;
+  gap: 0.42rem;
+  align-content: start;
+}
+
+.footer-column h3 {
+  font-family: "Sora", "Manrope", sans-serif !important;
+  margin-bottom: 0.3rem;
+  font-size: 0.98rem;
+  color: #d5eaff;
+}
+
+.footer-link {
+  border: none;
+  background: transparent;
+  color: #eaf4ff;
+  text-align: left;
+  padding: 0;
+  font-size: 0.92rem;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.footer-link:hover {
+  color: #8ed3ff;
+}
+
+.footer-column p {
+  font-size: 0.92rem;
+  color: #d6e9fb;
+  line-height: 1.58;
+}
+
+.footer-bottom {
+  margin-top: 1.35rem;
+  border-top: 1px solid rgba(187, 215, 242, 0.24);
+  padding: 0.95rem 1rem 1.1rem;
+  text-align: center;
+}
+
+.footer-bottom p {
+  color: #c5def4;
+  font-size: 0.86rem;
+}
+
 .cta-outline-btn {
   color: #10283f;
   border: 1.5px solid #10283f;
@@ -1285,6 +1438,14 @@ export default {
   .governance-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .landing-footer-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -1317,6 +1478,10 @@ export default {
   .impact-grid,
   .detail-grid,
   .governance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
     grid-template-columns: 1fr;
   }
 
